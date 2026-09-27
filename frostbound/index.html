@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+  <meta name="theme-color" content="#031022" />
+  <title>PLAY VOLT: FROSTBOUND</title>
+  <link rel="preconnect" href="https://images.unsplash.com" />
+  <link rel="preconnect" href="https://cdn.3dassets.dev" />
+  <link rel="stylesheet" href="game.css" />
+</head>
+<body>
+  <div id="backdrop" aria-hidden="true"></div>
+  <div id="game"></div>
+
+  <div id="loading" class="loading-screen">
+    <div class="loading-photo"></div>
+    <div class="loading-vignette"></div>
+    <div class="loading-copy">
+      <div class="eyebrow">ELECTRIC SNOW RACING</div>
+      <h1>PLAY <span>VOLT</span></h1>
+      <h2>FROSTBOUND</h2>
+      <div class="loadbar"><i id="loadFill"></i></div>
+      <p id="loadText">Loading alpine world…</p>
+    </div>
+  </div>
+
+  <section id="startScreen" class="start-screen hidden">
+    <div class="start-panel">
+      <div class="eyebrow">AURORA VALLEY // NIGHT RUN</div>
+      <h1>PLAY <span>VOLT</span></h1>
+      <h2>FROSTBOUND</h2>
+      <p>Race the frozen valley. Charge the Volt grid. Hit every ramp.</p>
+      <div class="mission-preview">
+        <div><b>12</b><span>VOLT CELLS</span></div>
+        <div><b>5</b><span>RAMPS</span></div>
+        <div><b>2.5 km</b><span>DISTANCE</span></div>
+      </div>
+      <button id="rideButton" class="ride-button">RIDE <span>⚡</span></button>
+      <small>Swipe or use A/D to steer · JUMP · hold BOOST</small>
+    </div>
+  </section>
+
+  <header class="hud hud-top hidden" id="hudTop">
+    <div class="brand-card glass"><strong>PLAY-<em>VOLT</em></strong><span>FROSTBOUND</span></div>
+    <div class="mission-card glass">
+      <span class="label">FROSTBOUND RUN</span>
+      <div class="mission-row"><span>⚡ VOLT</span><b id="voltText">0 / 12</b></div>
+      <div class="mission-row"><span>▲ RAMPS</span><b id="rampText">0 / 5</b></div>
+      <div class="mission-row"><span>↟ DISTANCE</span><b id="distanceText">0 / 2500 m</b></div>
+    </div>
+  </header>
+
+  <aside class="speed-card glass hidden" id="speedCard">
+    <span class="label">SPEED</span>
+    <div><strong id="speedText">0</strong><small>KM/H</small></div>
+    <div class="energy"><i id="energyFill"></i></div>
+    <span class="energy-label">VOLT ENERGY</span>
+  </aside>
+
+  <div id="trick" class="trick hidden">AIR +0</div>
+  <div id="toast" class="toast hidden">VOLT CHARGED</div>
+
+  <footer class="controls hidden" id="controls">
+    <button id="jumpButton" class="control jump"><span>▲</span>JUMP</button>
+    <div class="steer-hint"><i></i><span>SWIPE TO STEER</span><i></i></div>
+    <button id="boostButton" class="control boost"><span>⚡</span>BOOST</button>
+  </footer>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="game.js"></script>
+</body>
+</html>
