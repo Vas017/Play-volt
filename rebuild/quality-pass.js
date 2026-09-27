@@ -1,30 +1,18 @@
-// PLAY-VOLT cinematic quality pass. Loaded after game.js during rebuild testing.
+// PLAY-VOLT cinematic quality pass
 import * as THREE from 'three';
-// Asset-ready manifest: these slots are intentionally separated from gameplay so GLB/PBR assets
-// can replace proxy geometry without rewriting steering, missions, collisions or progression.
-export const visualTarget={
- environment:['hero alpine skyline','fortress village','ice canyon','waterfall basin','pine corridor'],
- vehicle:['snowmobile chassis','articulated skis','track assembly','rider rig','helmet visor'],
- fx:['aurora ribbons','powder spray','speed streaks','landing burst','waterfall mist','orb bloom'],
- materials:['packed snow','blue ice','wet rock','painted metal','glass visor','warm windows']
-};
+export const visualTarget={environment:['hero alpine skyline','fortress village','ice canyon','waterfall basin','pine corridor'],vehicle:['snowmobile chassis','articulated skis','track assembly','rider rig','helmet visor'],fx:['aurora ribbons','powder spray','speed streaks','landing burst','waterfall mist','orb bloom'],materials:['packed snow','blue ice','wet rock','painted metal','glass visor','warm windows']};
 export function installCinematicPass({scene,camera,renderer,rider,world}){
- renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.22;
- scene.fog=new THREE.FogExp2(0x315f7d,.0085);
- const rim=new THREE.DirectionalLight(0x7deaff,2.2);rim.position.set(18,16,8);scene.add(rim);
- const key=new THREE.DirectionalLight(0xffe6c2,1.8);key.position.set(-14,22,-18);scene.add(key);
- const fill=new THREE.PointLight(0x16dfff,18,55);fill.position.set(0,8,-20);scene.add(fill);
- // Layered translucent aurora planes create distant parallax instead of a flat sky color.
- const auroraMat=(c,o)=>new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:o,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending});
- [[0x35ffd0,.10,-75,27],[0x4ac8ff,.08,-105,31],[0xa65cff,.055,-140,34]].forEach(([c,o,z,y],i)=>{const q=new THREE.Mesh(new THREE.PlaneGeometry(110,13,24,2),auroraMat(c,o));q.position.set(i%2?8:-8,y,z);q.rotation.x=-.12;q.rotation.z=(i-1)*.05;scene.add(q)});
- // Powder cloud anchored to the machine gives acceleration and landing weight.
+ renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.22;scene.fog=new THREE.FogExp2(0x315f7d,.0085);
+ const rim=new THREE.DirectionalLight(0x7deaff,2.2);rim.position.set(18,16,8);scene.add(rim);const key=new THREE.DirectionalLight(0xffe6c2,1.8);key.position.set(-14,22,-18);scene.add(key);const fill=new THREE.PointLight(0x16dfff,18,55);fill.position.set(0,8,-20);scene.add(fill);
+ const auroraMat=(c,o)=>new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:o,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending});[[0x35ffd0,.10,-75,27],[0x4ac8ff,.08,-105,31],[0xa65cff,.055,-140,34]].forEach(([c,o,z,y],i)=>{const q=new THREE.Mesh(new THREE.PlaneGeometry(110,13,24,2),auroraMat(c,o));q.position.set(i%2?8:-8,y,z);q.rotation.x=-.12;q.rotation.z=(i-1)*.05;scene.add(q)});
  const n=220,g=new THREE.BufferGeometry(),a=new Float32Array(n*3);for(let i=0;i<n;i++){a[i*3]=(Math.random()-.5)*3;a[i*3+1]=Math.random()*1.2;a[i*3+2]=1+Math.random()*5}g.setAttribute('position',new THREE.BufferAttribute(a,3));const powder=new THREE.Points(g,new THREE.PointsMaterial({color:0xdff8ff,size:.11,transparent:true,opacity:.55,depthWrite:false}));rider.add(powder);
- // Headlight cone substitutes for a costly volumetric pass on mobile.
  const beam=new THREE.Mesh(new THREE.ConeGeometry(3.8,18,24,1,true),new THREE.MeshBasicMaterial({color:0x74efff,transparent:true,opacity:.035,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending}));beam.rotation.x=-Math.PI/2;beam.position.set(0,1.15,-9);rider.add(beam);
- // Track-side illuminated pylons improve speed/depth read and make the course feel authored.
- const pylonMat=new THREE.MeshStandardMaterial({color:0x173047,metalness:.72,roughness:.25});const stripMat=new THREE.MeshStandardMaterial({color:0x65f5ff,emissive:0x22dfff,emissiveIntensity:4});
- for(let z=-35;z>-430;z-=34)for(const x of[-5.4,5.4]){const g=new THREE.Group();const p=new THREE.Mesh(new THREE.CylinderGeometry(.08,.14,2.7,8),pylonMat);p.position.y=1.35;g.add(p);const s=new THREE.Mesh(new THREE.BoxGeometry(.12,1.8,.12),stripMat);s.position.set(0,1.65,.05);g.add(s);g.position.set(x,0,z);world.add(g)}
- // Camera composition is intentionally low and close for the reference's console-racer feel.
- camera.fov=62;camera.updateProjectionMatrix();
- return {powder,beam};
+ const pylonMat=new THREE.MeshStandardMaterial({color:0x173047,metalness:.72,roughness:.25}),stripMat=new THREE.MeshStandardMaterial({color:0x65f5ff,emissive:0x22dfff,emissiveIntensity:4});for(let z=-35;z>-430;z-=34)for(const x of[-5.4,5.4]){const q=new THREE.Group(),p=new THREE.Mesh(new THREE.CylinderGeometry(.08,.14,2.7,8),pylonMat);p.position.y=1.35;q.add(p);const s=new THREE.Mesh(new THREE.BoxGeometry(.12,1.8,.12),stripMat);s.position.set(0,1.65,.05);q.add(s);q.position.set(x,0,z);world.add(q)}
+ // Authored fortress landmark: towers, roofs, warm windows and connecting gate create a readable destination.
+ const stone=new THREE.MeshStandardMaterial({color:0x263b50,roughness:.82}),roof=new THREE.MeshStandardMaterial({color:0xd9f3fa,roughness:.7}),windowMat=new THREE.MeshStandardMaterial({color:0xffc15b,emissive:0xff8a20,emissiveIntensity:3});const fortress=new THREE.Group();for(const x of[-8,-3,3,8]){const h=5+Math.abs(x)*.22,t=new THREE.Mesh(new THREE.CylinderGeometry(1.45,1.7,h,8),stone);t.position.set(x,h/2,0);t.castShadow=true;fortress.add(t);const r=new THREE.Mesh(new THREE.ConeGeometry(2.15,2.5,8),roof);r.position.set(x,h+1.15,0);fortress.add(r);for(const y of[1.7,3.2]){const w=new THREE.Mesh(new THREE.BoxGeometry(.42,.5,.08),windowMat);w.position.set(x,y,1.62);fortress.add(w)}}const gate=new THREE.Mesh(new THREE.BoxGeometry(14,3.4,2),stone);gate.position.set(0,2.1,0);fortress.add(gate);const arch=new THREE.Mesh(new THREE.TorusGeometry(2.2,.55,10,28,Math.PI),stone);arch.position.set(0,.9,1.05);fortress.add(arch);fortress.position.set(0,0,-345);world.add(fortress);const fortGlow=new THREE.PointLight(0xffa53b,24,45);fortGlow.position.set(0,7,-340);world.add(fortGlow);
+ // Ice arches give the race line large silhouettes and foreground/midground parallax.
+ const ice=new THREE.MeshPhysicalMaterial({color:0x71dff4,roughness:.18,metalness:.05,transparent:true,opacity:.82,clearcoat:1});for(const z of[-135,-265]){const ig=new THREE.Group();for(const x of[-5.8,5.8]){const col=new THREE.Mesh(new THREE.CylinderGeometry(.55,1.15,8,7),ice);col.position.set(x,4,0);col.rotation.z=x<0?-.13:.13;ig.add(col)}const top=new THREE.Mesh(new THREE.TorusGeometry(5.8,.62,8,32,Math.PI),ice);top.rotation.z=Math.PI;top.position.y=7.2;ig.add(top);ig.position.z=z;world.add(ig)}
+ // Waterfall mist fields add movement and soften the hard geometry at landmark basins.
+ const mistMat=new THREE.PointsMaterial({color:0xc9fbff,size:.16,transparent:true,opacity:.38,depthWrite:false});for(const [x,z] of[[-16,-95],[16,-185],[-17,-290]]){const mg=new THREE.BufferGeometry(),ma=new Float32Array(70*3);for(let i=0;i<70;i++){ma[i*3]=(Math.random()-.5)*5;ma[i*3+1]=Math.random()*3;ma[i*3+2]=(Math.random()-.5)*4}mg.setAttribute('position',new THREE.BufferAttribute(ma,3));const m=new THREE.Points(mg,mistMat);m.position.set(x,.5,z+4);world.add(m)}
+ camera.fov=62;camera.updateProjectionMatrix();return {powder,beam,fortress};
 }
